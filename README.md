@@ -7,7 +7,7 @@ Lex Unum reúne em um só lugar:
 - **Vade Mecum** — 277 leis e códigos em texto integral (23 mil artigos), com busca por artigo ou palavra-chave e notas de estudo nos artigos mais cobrados.
 - **Doutrinas por matéria** — resumos das principais disciplinas do Direito e da prova da OAB.
 - **Jurisprudência** — 33 mil precedentes do STF e do STJ (súmulas, temas, teses, informativos e acórdãos uniformizadores), com busca e link para a fonte oficial.
-- **Peças processuais** — modelos comentados (petição inicial, contestação, apelação, HC, MS, remédios constitucionais etc.) e assistente de IA.
+- **Peças processuais** — 88 modelos de todas as áreas (cível, família, penal, trabalho, tributário, constitucional, administrativo e empresarial), com cabimento, prazo, fundamento, requisitos, dicas e assistente de IA.
 - **Banco de questões** — questões autorais de 1ª fase (com comentário em cada alternativa) e de 2ª fase (discursivas com gabarito), além de importação por PDF ou JSON.
 - **Simulado OAB** — simulados cronometrados por nível (fácil, médio, difícil) com sugestão adaptativa.
 - **Provas oficiais** — links para os canais oficiais da OAB/FGV.
@@ -60,3 +60,10 @@ O app espera as tabelas `questoes_importadas`, `resultados_simulado` e `resposta
 ---
 
 Desenvolvido por [Feito em Código](https://github.com/Luiz204).
+
+## Conteúdo editorial
+
+- `scripts/doutrinas/` — textos dos 78 tópicos de doutrina. Depois de editar, rode `python scripts/doutrinas/build.py`.
+- `scripts/pecas/` — os 77 modelos de peças adicionados. Depois de editar, rode `python scripts/pecas/build.py`.
+
+Os dois scripts embutem o conteúdo no `index.html`.
