@@ -1708,7 +1708,7 @@ function renderResultadosJP(){
   if(jp.tipo==="todos" && jp.modo!=="busca") return `<p class="vm-status">Digite palavras-chave para buscar em todos os tipos de precedente, ou escolha um tipo acima para navegar.</p>`;
   if(!jp.itens.length && jp.carregando) return `<p class="vm-status">Carregando...</p>`;
   if(!jp.itens.length) return `<p class="vm-status">${jp.modo==="busca" ? "Nenhum precedente encontrado para essa busca." : "Nenhum precedente cadastrado neste tipo."}</p>`;
-  const cab = jp.modo==="busca" ? `<p class="vm-status">${jp.itens.length}${jp.fim?"":"+"} resultado(s) para “${esc(jp.busca)}”.</p>` : "";
+  const cab = jp.modo==="busca" ? `<p class="vm-status">${jp.itens.length}${jp.fim?"":"+"} resultado(s) para “${esc(jp.busca)}”${jp.tipo==="todos" ? " — use as abas acima para filtrar por tipo" : " em "+esc(TIPO_POR_ID[jp.tipo].nome)}.</p>` : "";
   return cab + jp.itens.map(renderPrecCard).join("")
     + (jp.fim ? "" : `<div style="text-align:center; margin:18px 0;"><button class="btn ghost" id="jpMais" ${jp.carregando?"disabled":""}>${jp.carregando?"Carregando...":"Carregar mais"}</button></div>`);
 }
@@ -1777,7 +1777,7 @@ function attachJurisprudenciaEvents(){
     jp.tipo = b.dataset.tipo; jp.itens=[]; jp.fim=false; jp.erro=null; render();
   }));
   const input = document.getElementById("jpSearch");
-  const executar = ()=>{ jp.busca = input.value.trim(); jp.modo = jp.busca ? "busca" : "lista"; if(!jp.busca && jp.tipo==="todos") jp.tipo="sumula_vinculante"; jp.itens=[]; jp.fim=false; jp.erro=null; render(); };
+  const executar = ()=>{ const nova = input.value.trim(); if(nova && nova !== jp.busca) jp.tipo = "todos"; jp.busca = nova; jp.modo = jp.busca ? "busca" : "lista"; if(!jp.busca && jp.tipo==="todos") jp.tipo="sumula_vinculante"; jp.itens=[]; jp.fim=false; jp.erro=null; render(); };
   document.getElementById("jpBuscar").addEventListener("click", executar);
   input.addEventListener("keydown", e=>{ if(e.key==="Enter") executar(); });
   const limpar = document.getElementById("jpLimpar");
