@@ -181,6 +181,39 @@
   .auth-msg.ok{color:#43602F;}
   .auth-user{font-size:12.5px; color:var(--text-soft); margin-bottom:10px; word-break:break-all;}
 
+
+  /* ---------- Acervo (Vade Mecum e Jurisprudência) ---------- */
+  .vm-toolbar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;}
+  .vm-toolbar select{max-width:360px;}
+  .vm-toolbar input[type=text]{flex:1; min-width:240px; padding:10px 14px; border-radius:5px; border:1px solid var(--line); font-family:var(--sans); font-size:14px; background:var(--paper);}
+  .vm-check{font-size:13px; color:var(--text-soft); display:flex; gap:6px; align-items:center; cursor:pointer;}
+  .vm-status{font-size:13px; color:var(--text-soft); margin:4px 0 14px;}
+  .article-card .art-text{white-space:pre-line;}
+  .art-lei{font-family:var(--sans); font-weight:400; font-size:12px; color:var(--text-soft); margin-left:6px;}
+  .art-path{font-size:11.5px; color:var(--gold); margin:-2px 0 8px; text-transform:uppercase; letter-spacing:0.02em;}
+  .art-link{display:inline-block; margin-top:10px; font-size:12.5px; color:var(--ink-2); font-weight:600; text-decoration:none;}
+  .art-full summary{cursor:pointer; font-size:12.5px; color:var(--ink-2); margin-top:8px;}
+  .art-full .art-text{margin-top:8px;}
+  mark{background:#F2E2B3; color:inherit; padding:0 1px; border-radius:2px;}
+  .chip-n{font-size:11px; opacity:0.7; margin-left:4px;}
+  .prec-titulo{font-size:14px; font-weight:600; color:var(--ink-2); margin:2px 0 8px; line-height:1.45;}
+  .prec-tese{font-size:15px;}
+  .prec-label{font-family:var(--sans); font-size:11.5px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:0.03em;}
+  .prec-meta{font-size:12px; color:var(--text-soft); margin-bottom:8px;}
+  .prec-badge{display:inline-block; font-size:11px; font-weight:600; color:#fff; background:var(--burgundy); padding:3px 9px; border-radius:10px; margin-left:6px;}
+  .prec-inativa .sumula-text{color:var(--text-soft); text-decoration:line-through; text-decoration-color:rgba(122,46,46,0.4);}
+  .prec-acoes{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+  .prec-acoes .btn{font-size:12.5px; padding:6px 12px; text-decoration:none;}
+  .prec-detalhe{font-size:13px; color:var(--text); line-height:1.6;}
+  .prec-detalhe:not(:empty){margin-top:12px; border-top:1px solid var(--line); padding-top:12px;}
+  .prec-detalhe-texto{white-space:pre-line; margin-bottom:10px;}
+  .prec-sub{font-size:12px; font-weight:600; color:var(--gold); margin:8px 0 4px;}
+  .prec-grid{display:grid; grid-template-columns:1fr; gap:4px; font-size:12.5px;}
+  .prec-grid span{display:inline-block; min-width:150px; color:var(--text-soft);}
+  .prec-lista{margin:4px 0; padding-left:18px; font-size:12.5px;}
+  .prec-links{margin-top:8px; font-size:12.5px;}
+  .prec-links a, .prec-lista a{color:var(--ink-2);}
+
   ::-webkit-scrollbar{width:10px;}
   ::-webkit-scrollbar-thumb{background:#c9c0a4; border-radius:6px;}
 
@@ -246,10 +279,10 @@
       <button class="alt" id="landingSimulado">Fazer um simulado</button>
     </div>
     <div class="landing-feats">
-      <div class="landing-feat"><b>Vade Mecum</b><span>Códigos e leis com busca por artigo e link para o texto oficial.</span></div>
+      <div class="landing-feat"><b>Vade Mecum completo</b><span>277 leis e códigos na íntegra, com busca por artigo ou palavra-chave.</span></div>
       <div class="landing-feat"><b>Peças processuais</b><span>Modelos completos, remédios constitucionais e assistente de IA.</span></div>
       <div class="landing-feat"><b>Simulados</b><span>Níveis fácil, médio e difícil, com comentário em cada alternativa.</span></div>
-      <div class="landing-feat"><b>Notícias</b><span>Acompanhe o que acontece no Direito, de todas as áreas.</span></div>
+      <div class="landing-feat"><b>Jurisprudência</b><span>Súmulas, temas, teses e informativos do STF e do STJ, com fonte oficial.</span></div>
     </div>
   </div>
   <div class="landing-stats" id="landingStats"></div>
@@ -284,7 +317,7 @@
     <div class="topbar">
       <div class="search-wrap">
         <svg class="sico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input id="globalSearch" type="text" placeholder="Buscar artigo, súmula, matéria ou peça... (ex: art. 927, súmula 7, contestação)">
+        <input id="globalSearch" type="text" placeholder="Buscar no Vade Mecum: artigo ou palavras-chave (ex.: art. 927, legítima defesa)">
       </div>
       <div class="topbar-right">
         <div class="streak-pill">🔥 <span id="streakCount">6</span> dias de estudo seguidos</div>
@@ -1295,13 +1328,9 @@ document.getElementById("primaryNav").addEventListener("click", (e)=>{
 
 document.getElementById("globalSearch").addEventListener("keydown",(e)=>{
   if(e.key === "Enter"){
-    const q = e.target.value.trim().toLowerCase();
+    const q = e.target.value.trim();
     if(!q) return;
-    goToView("vademecum");
-    setTimeout(()=>{
-      document.getElementById("vmSearch") && (document.getElementById("vmSearch").value = q);
-      filtrarVademecum(q);
-    },0);
+    pesquisarNoVademecum(e.target.value.trim());
   }
 });
 
@@ -1318,7 +1347,7 @@ function render(){
     case "dashboard": root.innerHTML = renderDashboard(); break;
     case "vademecum": root.innerHTML = renderVademecum(); attachVademecumEvents(); break;
     case "doutrinas": root.innerHTML = renderDoutrinas(); attachDoutrinasEvents(); break;
-    case "jurisprudencia": root.innerHTML = renderJurisprudencia(); break;
+    case "jurisprudencia": root.innerHTML = renderJurisprudencia(); attachJurisprudenciaEvents(); break;
     case "pecas": root.innerHTML = renderPecas(); attachPecasEvents(); break;
     case "questoes": root.innerHTML = renderQuestoes(); attachQuestoesEvents(); break;
     case "simulado": root.innerHTML = renderSimulado(); attachSimuladoEvents(); break;
@@ -1374,42 +1403,399 @@ function renderHistoricoSimulados(){
   `).join("");
 }
 
+/* ============================= ACERVO (NEON) ============================= */
+/* Leis e precedentes ficam no Neon (Data API, leitura pública com token anônimo).
+   Se o acervo estiver fora do ar, o app volta para a seleção curada embutida (CODIGOS / SUMULAS). */
+const NEON_API  = "https://ep-fancy-water-b60a2f2t.apirest.c-2.sa-east-1.aws.neon.tech/neondb/rest/v1";
+const NEON_AUTH = "https://ep-fancy-water-b60a2f2t.neonauth.c-2.sa-east-1.aws.neon.tech/neondb/auth";
+
+let neonToken = null, neonTokenExp = 0, neonTokenPromise = null;
+async function neonTokenAnonimo(forcar){
+  if(!forcar && neonToken && Date.now() < neonTokenExp) return neonToken;
+  if(!forcar && neonTokenPromise) return neonTokenPromise;
+  neonTokenPromise = (async ()=>{
+    const r = await fetch(NEON_AUTH + "/token/anonymous");
+    if(!r.ok) throw new Error("não foi possível acessar o acervo ("+r.status+")");
+    neonToken = (await r.json()).token;
+    try{
+      const p = JSON.parse(atob(neonToken.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+      neonTokenExp = p.exp*1000 - 60000;
+    }catch(e){ neonTokenExp = Date.now() + 5*60000; }
+    return neonToken;
+  })();
+  try{ return await neonTokenPromise; } finally { neonTokenPromise = null; }
+}
+async function acervo(caminho, opcoes={}, tentativa=0){
+  const tok = await neonTokenAnonimo(tentativa > 0);
+  const r = await fetch(NEON_API + caminho, {...opcoes, headers:{"Authorization":"Bearer "+tok, "Content-Type":"application/json", ...(opcoes.headers||{})}});
+  if(r.status === 401 && tentativa === 0) return acervo(caminho, opcoes, 1);
+  if(!r.ok) throw new Error("erro "+r.status+" ao consultar o acervo");
+  return r.json();
+}
+const acervoRpc = (fn, args) => acervo("/rpc/"+fn, {method:"POST", body: JSON.stringify(args)});
+
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function escMarcado(s){ return esc(s).replace(/&lt;mark&gt;/g,"<mark>").replace(/&lt;\/mark&gt;/g,"</mark>"); }
+function urlSegura(u){ return /^https?:\/\//i.test(u||"") ? esc(u) : ""; }
+
+/* Notas de estudo curadas (CODIGOS) indexadas por código + número do artigo */
+const NOTAS_CURADAS = {};
+Object.entries(CODIGOS).forEach(([cod, c])=>{
+  c.artigos.forEach(a=>{
+    const m = a.num.match(/Art\.\s*([\d.]+)(?:-([A-Z]))?/i);
+    if(!m) return;
+    const chave = cod + ":" + m[1].replace(/\./g,"") + (m[2] ? "-"+m[2].toUpperCase() : "");
+    (NOTAS_CURADAS[chave] = NOTAS_CURADAS[chave] || []).push({ref:a.num, nota:a.nota});
+  });
+});
+/* Comentários curados (SUMULAS) indexados pelo id do acervo */
+function idCurado(s){
+  const n = (s.numero.match(/\d+/)||[""])[0];
+  if(/vinculante/i.test(s.numero)) return "SV-"+n;
+  if(s.tribunal === "STF") return "STF-SUM-"+n;
+  if(s.tribunal === "STJ") return "STJ-SUM-"+n;
+  return null;
+}
+const COMENTARIOS_CURADOS = {};
+SUMULAS.forEach(s=>{ const id = idCurado(s); if(id) COMENTARIOS_CURADOS[id] = s.comentario; });
+
 /* ============================= VADE MECUM ============================= */
+const ATALHOS_LEIS = ["CF","CC","CP","CPC","CPP","CLT","CDC","CTN","ECA","EOAB"];
+const vm = { leis:null, erroLeis:null, lei:"CF", modo:"lista", itens:[], fim:false, carregando:false, erro:null, busca:"", todas:false, offline:false };
+
+function nomeLei(cod){
+  const l = vm.leis && vm.leis.find(x=>x.codigo===cod);
+  return l ? l.nome : (CODIGOS[cod] ? CODIGOS[cod].nome : cod);
+}
 function renderVademecum(){
+  if(vm.offline) return renderVademecumCurado();
+  const lei = vm.leis && vm.leis.find(x=>x.codigo===vm.lei);
+  const grupos = {};
+  (vm.leis||[]).forEach(l=>{ (grupos[l.categoria||"Outras"] = grupos[l.categoria||"Outras"] || []).push(l); });
+  const ordemGrupos = ["Constituição","Códigos","Estatutos","Leis complementares","Leis","Decretos e decretos-lei"];
+  const opcoes = vm.leis
+    ? Object.keys(grupos).sort((a,b)=>(ordemGrupos.indexOf(a)+99)%99-(ordemGrupos.indexOf(b)+99)%99).map(g=>`<optgroup label="${esc(g)}">${grupos[g].map(l=>`<option value="${esc(l.codigo)}" ${l.codigo===vm.lei?"selected":""}>${esc(l.nome)}${l.norma && l.norma!==l.nome ? " — "+esc(l.norma) : ""}</option>`).join("")}</optgroup>`).join("")
+    : `<option>${vm.erroLeis ? "Acervo indisponível" : "Carregando leis..."}</option>`;
+  const total = vm.leis ? vm.leis.reduce((s,l)=>s+(l.total_artigos||0),0) : 0;
+  return `
+    <h1>Vade Mecum</h1>
+    <p class="lede">${vm.leis ? `${vm.leis.length} leis e códigos com ${total.toLocaleString("pt-BR")} artigos em texto integral.` : "Constituição, códigos, estatutos e leis em texto integral."} Busque pelo número do artigo ou por palavras-chave; as notas de estudo aparecem nos artigos mais cobrados.</p>
+    <div class="vm-toolbar">
+      <select id="vmLei" ${vm.leis?"":"disabled"}>${opcoes}</select>
+      <input id="vmSearch" type="text" value="${esc(vm.busca)}" placeholder="Artigo (ex.: 927, 1.829) ou palavras-chave (ex.: legítima defesa)">
+      <label class="vm-check"><input type="checkbox" id="vmTodas" ${vm.todas?"checked":""}> em todas as leis</label>
+      <button class="btn primary" id="vmBuscar">Buscar</button>
+      ${vm.modo!=="lista" ? `<button class="btn ghost" id="vmLimpar">Limpar busca</button>` : ""}
+    </div>
+    <div class="code-tabs">${ATALHOS_LEIS.map(k=>`<button class="code-tab ${k===vm.lei?"active":""}" data-code="${k}">${k}</button>`).join("")}</div>
+    ${lei ? `<div class="notice" style="margin-bottom:20px;"><strong>${esc(lei.nome)}</strong>${lei.norma && lei.norma!==lei.nome ? " ("+esc(lei.norma)+")" : ""} · ${lei.total_artigos} artigos · texto compilado do Planalto${lei.capturado_em ? " capturado em "+new Date(lei.capturado_em).toLocaleDateString("pt-BR") : ""}. <a href="${urlSegura(lei.url)}" target="_blank" rel="noopener" style="color:var(--ink-2); font-weight:600;">Abrir no Planalto ↗</a></div>` : ""}
+    <div id="vmArticles">${renderResultadosVM()}</div>
+  `;
+}
+function renderArtigoCard(a, comTrecho){
+  const caminho = [a.titulo, a.capitulo, a.secao].filter(Boolean).map(esc).join(" › ");
+  const notas = NOTAS_CURADAS[a.lei_codigo+":"+a.numero] || [];
+  const corpo = comTrecho && a.trecho
+    ? `<div class="art-text">${escMarcado(a.trecho)}</div><details class="art-full"><summary>Ver artigo completo</summary><div class="art-text">${esc(a.texto)}</div></details>`
+    : `<div class="art-text">${esc(a.texto)}</div>`;
+  return `
+    <div class="article-card">
+      <div class="art-num">${esc(a.lei_codigo)} · Art. ${esc(a.numero)}${comTrecho ? ` <span class="art-lei">${esc(a.lei_nome || nomeLei(a.lei_codigo))}</span>` : ""}</div>
+      ${caminho ? `<div class="art-path">${caminho}</div>` : ""}
+      ${corpo}
+      ${notas.map(n=>`<div class="art-note"><strong>Nota de estudo${notas.length>1 ? " ("+esc(n.ref)+")" : ""}:</strong> ${esc(n.nota)}</div>`).join("")}
+      ${a.url ? `<a class="art-link" href="${urlSegura(a.url)}" target="_blank" rel="noopener">Ver no Planalto ↗</a>` : ""}
+    </div>`;
+}
+function renderResultadosVM(){
+  if(vm.erro) return `<div class="notice">Não foi possível consultar o acervo agora (${esc(vm.erro)}). <button class="btn ghost" id="vmTentar">Tentar novamente</button></div>`;
+  if(!vm.itens.length && vm.carregando) return `<p class="vm-status">Carregando...</p>`;
+  if(!vm.itens.length) return `<p class="vm-status">${vm.modo==="lista" ? "Nenhum artigo encontrado." : "Nenhum resultado para essa busca."}</p>`;
+  const cabecalho = vm.modo==="busca" ? `<p class="vm-status">${vm.itens.length}${vm.fim?"":"+"} resultado(s) para “${esc(vm.busca)}”${vm.todas?" em todas as leis":" em "+esc(nomeLei(vm.lei))}.</p>` : "";
+  return cabecalho + vm.itens.map(a=>renderArtigoCard(a, vm.modo==="busca")).join("")
+    + (vm.fim ? "" : `<div style="text-align:center; margin:18px 0;"><button class="btn ghost" id="vmMais" ${vm.carregando?"disabled":""}>${vm.carregando?"Carregando...":"Carregar mais"}</button></div>`);
+}
+function atualizarResultadosVM(){
+  const c = document.getElementById("vmArticles");
+  if(c && state.view==="vademecum"){ c.innerHTML = renderResultadosVM(); ligarResultadosVM(); }
+}
+function ligarResultadosVM(){
+  const mais = document.getElementById("vmMais");
+  if(mais) mais.addEventListener("click", ()=> vm.modo==="busca" ? buscarVM(false) : carregarArtigosVM(false));
+  const tentar = document.getElementById("vmTentar");
+  if(tentar) tentar.addEventListener("click", ()=>{ vm.erro=null; vm.modo==="busca" ? buscarVM(true) : carregarArtigosVM(true); });
+}
+async function carregarLeisVM(){
+  if(vm.leis || vm.carregandoLeis) return;
+  vm.carregandoLeis = true;
+  try{
+    vm.leis = await acervo("/leis?select=codigo,nome,norma,url,total_artigos,categoria,capturado_em&order=nome");
+    if(!vm.leis.length) throw new Error("acervo vazio");
+    if(!vm.leis.find(l=>l.codigo===vm.lei)) vm.lei = vm.leis[0].codigo;
+  }catch(err){
+    vm.leis = null; vm.erroLeis = err.message; vm.offline = true;
+  }
+  vm.carregandoLeis = false;
+  if(state.view==="vademecum") render();
+}
+async function carregarArtigosVM(reiniciar){
+  if(reiniciar){ vm.itens=[]; vm.fim=false; vm.modo="lista"; }
+  if(vm.carregando || vm.fim) return;
+  vm.carregando = true; vm.erro = null; atualizarResultadosVM();
+  const lei = vm.lei;
+  try{
+    const novos = await acervo(`/dispositivos?select=id,lei_codigo,numero,texto,url,titulo,capitulo,secao&lei_codigo=eq.${encodeURIComponent(lei)}&order=ordem&limit=40&offset=${vm.itens.length}`);
+    if(lei !== vm.lei || vm.modo !== "lista") return;
+    vm.itens = vm.itens.concat(novos); vm.fim = novos.length < 40;
+  }catch(err){ vm.erro = err.message; }
+  finally{ vm.carregando = false; }
+  atualizarResultadosVM();
+}
+function numeroDeArtigo(q){
+  const m = q.trim().match(/^(?:art(?:igo)?\.?\s*)?(\d[\d.]*)\s*(?:[-–]\s*([a-z]))?\s*[º°o]?$/i);
+  return m ? m[1].replace(/\./g,"") + (m[2] ? "-"+m[2].toUpperCase() : "") : null;
+}
+async function buscarVM(reiniciar){
+  const q = vm.busca.trim();
+  if(!q){ carregarArtigosVM(true); return; }
+  if(reiniciar){ vm.itens=[]; vm.fim=false; vm.modo="busca"; }
+  if(vm.carregando || vm.fim) return;
+  vm.carregando = true; vm.erro = null; atualizarResultadosVM();
+  const chave = q + "|" + vm.todas + "|" + vm.lei;
+  try{
+    let novos;
+    const num = numeroDeArtigo(q);
+    if(num){
+      const filtroLei = vm.todas ? "" : `&lei_codigo=eq.${encodeURIComponent(vm.lei)}`;
+      novos = await acervo(`/dispositivos?select=id,lei_codigo,numero,texto,url,titulo,capitulo,secao&numero=eq.${encodeURIComponent(num)}${filtroLei}&order=lei_codigo&limit=60`);
+      novos = novos.map(a=>({...a, trecho:null}));
+      vm.fim = true;
+    }else{
+      novos = await acervoRpc("buscar_dispositivos", {q, lei: vm.todas ? null : vm.lei, limite: 30, deslocamento: vm.itens.length});
+      vm.fim = novos.length < 30;
+    }
+    if(chave !== vm.busca.trim()+"|"+vm.todas+"|"+vm.lei) return;
+    vm.itens = vm.itens.concat(novos);
+  }catch(err){ vm.erro = err.message; }
+  finally{ vm.carregando = false; }
+  atualizarResultadosVM();
+}
+function attachVademecumEvents(){
+  if(vm.offline){ attachVademecumCuradoEvents(); return; }
+  carregarLeisVM();
+  if(!vm.itens.length && !vm.carregando && !vm.erro) (vm.modo==="busca" ? buscarVM(true) : carregarArtigosVM(true));
+  const trocarLei = (cod)=>{ vm.lei = cod; vm.busca = ""; vm.modo = "lista"; vm.itens = []; vm.fim = false; vm.erro = null; render(); };
+  document.querySelectorAll(".code-tab[data-code]").forEach(tab=> tab.addEventListener("click", ()=> trocarLei(tab.dataset.code)));
+  const sel = document.getElementById("vmLei");
+  if(sel) sel.addEventListener("change", ()=> trocarLei(sel.value));
+  const input = document.getElementById("vmSearch");
+  const executar = ()=>{ vm.busca = input.value; vm.todas = document.getElementById("vmTodas").checked; vm.busca.trim() ? buscarVM(true) : carregarArtigosVM(true); render(); };
+  document.getElementById("vmBuscar").addEventListener("click", executar);
+  input.addEventListener("keydown", e=>{ if(e.key==="Enter") executar(); });
+  const limpar = document.getElementById("vmLimpar");
+  if(limpar) limpar.addEventListener("click", ()=>{ vm.busca=""; carregarArtigosVM(true); render(); });
+  ligarResultadosVM();
+}
+function pesquisarNoVademecum(q){
+  vm.busca = q; vm.todas = !numeroDeArtigo(q); vm.itens = []; vm.fim = false; vm.modo = "busca"; vm.erro = null;
+  goToView("vademecum");
+}
+
+/* --- modo de contingência: seleção curada embutida, usada se o acervo estiver fora do ar --- */
+function renderVademecumCurado(){
   const tabs = Object.keys(CODIGOS).map(k=>`<button class="code-tab ${k===state.vademecumCode?'active':''}" data-code="${k}">${k}</button>`).join("");
   const atual = CODIGOS[state.vademecumCode];
   return `
     <h1>Vade Mecum</h1>
-    <p class="lede">${Object.keys(CODIGOS).length} códigos e leis com busca por artigo, palavra-chave ou tema. Os artigos abaixo são uma seleção curada dos mais cobrados — para o texto oficial completo e sempre atualizado de cada código, use o link ao lado das abas.</p>
-    <input id="vmSearch" type="text" placeholder="Buscar por número do artigo ou palavra-chave..." style="width:100%; max-width:520px; padding:10px 14px; border-radius:5px; border:1px solid var(--line); margin-bottom:18px; font-family:var(--sans); font-size:14px;">
+    <div class="notice">O acervo completo está indisponível no momento${vm.erroLeis ? " ("+esc(vm.erroLeis)+")" : ""}. Exibindo a seleção curada dos artigos mais cobrados. <button class="btn ghost" id="vmReconectar">Tentar novamente</button></div>
+    <input id="vmSearchCurado" type="text" placeholder="Buscar por número do artigo ou palavra-chave..." style="width:100%; max-width:520px; padding:10px 14px; border-radius:5px; border:1px solid var(--line); margin-bottom:18px; font-family:var(--sans); font-size:14px;">
     <div class="code-tabs">${tabs}</div>
-    <div class="notice" style="margin-bottom:20px;">Você está vendo ${atual.artigos.length} artigos selecionados de ${atual.nome}. Para o texto integral e oficial (Planalto.gov.br), <a href="${atual.oficial}" target="_blank" rel="noopener" style="color:var(--ink-2); font-weight:600;">clique aqui</a>.</div>
-    <div id="vmArticles">${renderArtigos(atual.artigos)}</div>
+    <div class="notice" style="margin-bottom:20px;">${atual.artigos.length} artigos selecionados de ${esc(atual.nome)}. Texto integral: <a href="${atual.oficial}" target="_blank" rel="noopener" style="color:var(--ink-2); font-weight:600;">Planalto ↗</a></div>
+    <div id="vmArticlesCurado">${renderArtigosCurados(atual.artigos)}</div>
   `;
 }
-function renderArtigos(lista){
+function renderArtigosCurados(lista){
   if(lista.length===0) return `<p style="color:var(--text-soft); font-size:14px;">Nenhum artigo encontrado para essa busca.</p>`;
-  return lista.map(a=>`
-    <div class="article-card">
-      <div class="art-num">${a.num}</div>
-      <div class="art-text">${a.texto}</div>
-      <div class="art-note">${a.nota}</div>
-    </div>
-  `).join("");
+  return lista.map(a=>`<div class="article-card"><div class="art-num">${a.num}</div><div class="art-text">${a.texto}</div><div class="art-note">${a.nota}</div></div>`).join("");
 }
-function attachVademecumEvents(){
-  document.querySelectorAll(".code-tab").forEach(tab=>{
-    tab.addEventListener("click",()=>{ state.vademecumCode = tab.dataset.code; render(); });
+function attachVademecumCuradoEvents(){
+  document.querySelectorAll(".code-tab[data-code]").forEach(tab=> tab.addEventListener("click",()=>{ state.vademecumCode = tab.dataset.code; render(); }));
+  document.getElementById("vmSearchCurado").addEventListener("input", (e)=>{
+    const q = e.target.value.toLowerCase();
+    const lista = CODIGOS[state.vademecumCode].artigos.filter(a=> a.num.toLowerCase().includes(q) || a.texto.toLowerCase().includes(q) || a.nota.toLowerCase().includes(q));
+    document.getElementById("vmArticlesCurado").innerHTML = renderArtigosCurados(lista);
   });
-  document.getElementById("vmSearch").addEventListener("input", (e)=>filtrarVademecum(e.target.value));
+  document.getElementById("vmReconectar").addEventListener("click", ()=>{ vm.offline=false; vm.erroLeis=null; vm.itens=[]; render(); });
 }
-function filtrarVademecum(q){
-  q = (q||"").toLowerCase();
-  const lista = CODIGOS[state.vademecumCode].artigos.filter(a=>
-    a.num.toLowerCase().includes(q) || a.texto.toLowerCase().includes(q) || a.nota.toLowerCase().includes(q)
-  );
-  const container = document.getElementById("vmArticles");
-  if(container) container.innerHTML = renderArtigos(lista);
+
+/* ============================= JURISPRUDÊNCIA ============================= */
+const TIPOS_PREC = [
+  {id:"sumula_vinculante",   nome:"Súmulas vinculantes",           rotulo:"Súmula Vinculante", dir:"asc"},
+  {id:"sumula_stf",          nome:"Súmulas do STF",                rotulo:"Súmula",            dir:"asc"},
+  {id:"sumula_stj",          nome:"Súmulas do STJ",                rotulo:"Súmula",            dir:"asc"},
+  {id:"tema_rg_stf",         nome:"Repercussão geral (STF)",       rotulo:"Tema",              dir:"asc"},
+  {id:"tema_repetitivo_stj", nome:"Repetitivos (STJ)",             rotulo:"Tema",              dir:"asc"},
+  {id:"tese_stj",            nome:"Jurisprudência em Teses (STJ)", rotulo:"Tese",              dir:"desc"},
+  {id:"informativo_stf",     nome:"Informativo STF",               rotulo:"Informativo",       dir:"desc"},
+  {id:"acordao_stj",         nome:"Acórdãos uniformizadores (STJ)",rotulo:"",                  dir:"desc"}
+];
+const TIPO_POR_ID = Object.fromEntries(TIPOS_PREC.map(t=>[t.id,t]));
+const jp = { tipo:"sumula_vinculante", busca:"", modo:"lista", itens:[], fim:false, carregando:false, erro:null, contagem:null, offline:false, detalhes:{} };
+const SITUACOES_INATIVAS = /cancelad|revogad|superad|sem efeito|prejudicad/i;
+
+function renderJurisprudencia(){
+  if(jp.offline) return renderJurisprudenciaCurada();
+  const total = jp.contagem ? Object.values(jp.contagem).reduce((s,n)=>s+n,0) : null;
+  const chip = (id, nome)=>`<button class="code-tab ${jp.tipo===id?"active":""}" data-tipo="${id}">${esc(nome)}${jp.contagem && jp.contagem[id]!=null ? ` <span class="chip-n">${jp.contagem[id].toLocaleString("pt-BR")}</span>` : ""}</button>`;
+  return `
+    <h1>Jurisprudência</h1>
+    <p class="lede">${total ? total.toLocaleString("pt-BR")+" precedentes" : "Precedentes"} dos tribunais superiores: súmulas, súmulas vinculantes, temas de repercussão geral e repetitivos, Jurisprudência em Teses, Informativo STF e acórdãos uniformizadores do STJ — com link para a fonte oficial.</p>
+    <div class="vm-toolbar">
+      <input id="jpSearch" type="text" value="${esc(jp.busca)}" placeholder="Palavras-chave (ex.: dano moral inscrição indevida, prisão preventiva de ofício)">
+      <button class="btn primary" id="jpBuscar">Buscar</button>
+      ${jp.modo==="busca" ? `<button class="btn ghost" id="jpLimpar">Limpar busca</button>` : ""}
+    </div>
+    <div class="code-tabs">${chip("todos", "Todos")}${TIPOS_PREC.map(t=>chip(t.id, t.nome)).join("")}</div>
+    <div id="jpLista">${renderResultadosJP()}</div>
+  `;
+}
+function rotuloPrec(p){
+  const t = TIPO_POR_ID[p.tipo];
+  if(p.tipo==="acordao_stj") return `STJ · ${esc(p.numero)}`;
+  if(p.tipo==="informativo_stf") return `STF · Informativo ${esc(p.numero)}`;
+  return `${esc(p.tribunal)} · ${t ? esc(t.rotulo) : ""} ${esc(p.numero)}`;
+}
+function renderPrecCard(p){
+  const ehSumula = /^sumula/.test(p.tipo);
+  const inativa = p.situacao && SITUACOES_INATIVAS.test(p.situacao);
+  const comentario = COMENTARIOS_CURADOS[p.id];
+  const texto = p.trecho ? escMarcado(p.trecho) : esc(p.texto || "Tese ainda não firmada.");
+  const meta = [p.area, p.situacao && !inativa ? p.situacao : null, p.data_ref].filter(Boolean).map(esc).join(" · ");
+  return `
+    <div class="sumula-card ${inativa ? "prec-inativa" : ""}">
+      <span class="sumula-tribunal">${rotuloPrec(p)}</span>${inativa ? ` <span class="prec-badge">${esc(p.situacao)}</span>` : ""}
+      ${!ehSumula && p.titulo ? `<div class="prec-titulo">${esc(p.titulo)}</div>` : ""}
+      <div class="sumula-text ${ehSumula ? "" : "prec-tese"}">${!ehSumula && p.texto ? `<span class="prec-label">${p.tipo==="informativo_stf"||p.tipo==="acordao_stj" ? "Resumo" : "Tese"}:</span> ` : ""}${texto}</div>
+      ${meta ? `<div class="prec-meta">${meta}</div>` : ""}
+      ${comentario ? `<div class="sumula-comment"><strong>Para a prova:</strong> ${esc(comentario)}</div>` : ""}
+      <div class="prec-acoes">
+        <button class="btn ghost" data-detalhe="${esc(p.id)}">${jp.detalhes[p.id] ? "Ocultar detalhes" : "Ver detalhes"}</button>
+        ${p.url ? `<a class="btn ghost" href="${urlSegura(p.url)}" target="_blank" rel="noopener">Fonte oficial ↗</a>` : ""}
+      </div>
+      <div class="prec-detalhe" id="det-${esc(p.id)}">${jp.detalhes[p.id] ? renderDetalhe(jp.detalhes[p.id]) : ""}</div>
+    </div>`;
+}
+const ROTULOS_EXTRA = {leadingCase:"Leading case", processo:"Processo", relator:"Relator", orgaoJulgador:"Órgão julgador", orgao:"Órgão", classe:"Classe",
+  repercussao:"Repercussão geral", dataTese:"Data da tese", dataAfetacao:"Afetação", tema:"Tema", materia:"Matéria", legislacao:"Legislação",
+  observacao:"Observação", qtd_julgados:"Julgados", repercussaoGeral:"Repercussão geral", temaRG:"Tema RG", assuntos:"Assuntos",
+  numeroRegistro:"Registro", referenciasLegislativas:"Referências legislativas", jurisprudenciaCitada:"Jurisprudência citada"};
+function renderDetalhe(d){
+  if(d.carregando) return `<p class="vm-status">Carregando...</p>`;
+  if(d.erro) return `<p class="vm-status">Não foi possível carregar os detalhes (${esc(d.erro)}).</p>`;
+  const x = d.extra || {};
+  const linhas = Object.keys(ROTULOS_EXTRA).filter(k=>x[k]!=null && x[k]!=="" && !(Array.isArray(x[k]) && !x[k].length)).map(k=>{
+    const v = Array.isArray(x[k]) ? x[k].map(i=> typeof i==="object" ? Object.values(i).join(" ") : i).join("; ") : (typeof x[k]==="object" ? Object.values(x[k]).join("; ") : x[k]);
+    return `<div><span>${ROTULOS_EXTRA[k]}</span>${esc(v)}</div>`;
+  }).join("");
+  const precedentes = Array.isArray(x.precedentes) && x.precedentes.length ? `<div class="prec-sub">Precedentes</div><ul class="prec-lista">${x.precedentes.slice(0,15).map(pr=>`<li>${pr.url ? `<a href="${urlSegura(pr.url)}" target="_blank" rel="noopener">${esc(pr.processo||"Precedente")}</a>` : esc(pr.processo||"")}${pr.relator ? " — "+esc(pr.relator) : ""}${pr.julgamento ? ", "+esc(pr.julgamento) : ""}</li>`).join("")}</ul>` : "";
+  const links = x.links && typeof x.links==="object" ? Object.values(x.links).filter(u=>/^https?:/.test(u)).map((u,i)=>`<a href="${urlSegura(u)}" target="_blank" rel="noopener">Link ${i+1} ↗</a>`).join(" · ") : "";
+  return `${d.detalhes ? `<div class="prec-sub">${d.tipo==="acordao_stj" ? "Ementa" : d.tipo==="informativo_stf" ? "Resumo" : "Descrição"}</div><div class="prec-detalhe-texto">${esc(d.detalhes)}</div>` : ""}
+    ${linhas ? `<div class="prec-grid">${linhas}</div>` : ""}${precedentes}${links ? `<div class="prec-links">${links}</div>` : ""}
+    ${!d.detalhes && !linhas && !precedentes ? `<p class="vm-status">Sem informações adicionais para este precedente.</p>` : ""}`;
+}
+function renderResultadosJP(){
+  if(jp.erro) return `<div class="notice">Não foi possível consultar o acervo agora (${esc(jp.erro)}). <button class="btn ghost" id="jpTentar">Tentar novamente</button></div>`;
+  if(jp.tipo==="todos" && jp.modo!=="busca") return `<p class="vm-status">Digite palavras-chave para buscar em todos os tipos de precedente, ou escolha um tipo acima para navegar.</p>`;
+  if(!jp.itens.length && jp.carregando) return `<p class="vm-status">Carregando...</p>`;
+  if(!jp.itens.length) return `<p class="vm-status">${jp.modo==="busca" ? "Nenhum precedente encontrado para essa busca." : "Nenhum precedente cadastrado neste tipo."}</p>`;
+  const cab = jp.modo==="busca" ? `<p class="vm-status">${jp.itens.length}${jp.fim?"":"+"} resultado(s) para “${esc(jp.busca)}”.</p>` : "";
+  return cab + jp.itens.map(renderPrecCard).join("")
+    + (jp.fim ? "" : `<div style="text-align:center; margin:18px 0;"><button class="btn ghost" id="jpMais" ${jp.carregando?"disabled":""}>${jp.carregando?"Carregando...":"Carregar mais"}</button></div>`);
+}
+function atualizarResultadosJP(){
+  const c = document.getElementById("jpLista");
+  if(c && state.view==="jurisprudencia"){ c.innerHTML = renderResultadosJP(); ligarResultadosJP(); }
+}
+function ligarResultadosJP(){
+  const mais = document.getElementById("jpMais");
+  if(mais) mais.addEventListener("click", ()=> carregarJP(false));
+  const tentar = document.getElementById("jpTentar");
+  if(tentar) tentar.addEventListener("click", ()=>{ jp.erro=null; carregarJP(true); });
+  document.querySelectorAll("[data-detalhe]").forEach(b=> b.addEventListener("click", ()=> alternarDetalhe(b.dataset.detalhe, b)));
+}
+async function alternarDetalhe(id, botao){
+  const alvo = document.getElementById("det-"+id);
+  if(jp.detalhes[id]){ delete jp.detalhes[id]; alvo.innerHTML = ""; botao.textContent = "Ver detalhes"; return; }
+  jp.detalhes[id] = {carregando:true}; alvo.innerHTML = renderDetalhe(jp.detalhes[id]); botao.textContent = "Ocultar detalhes";
+  try{
+    const r = await acervo(`/precedentes?select=tipo,detalhes,extra&id=eq.${encodeURIComponent(id)}`);
+    jp.detalhes[id] = r[0] || {};
+  }catch(err){ jp.detalhes[id] = {erro: err.message}; }
+  const el = document.getElementById("det-"+id);
+  if(el && jp.detalhes[id]) el.innerHTML = renderDetalhe(jp.detalhes[id]);
+}
+async function carregarContagemJP(){
+  if(jp.contagem || jp.carregandoContagem) return;
+  jp.carregandoContagem = true;
+  try{
+    const r = await acervoRpc("contar_precedentes", {});
+    jp.contagem = Object.fromEntries(r.map(x=>[x.tipo, Number(x.total)]));
+    if(!r.length) throw new Error("acervo vazio");
+  }catch(err){ jp.offline = true; jp.erroOffline = err.message; }
+  jp.carregandoContagem = false;
+  if(state.view==="jurisprudencia") render();
+}
+async function carregarJP(reiniciar){
+  if(reiniciar){ jp.itens=[]; jp.fim=false; }
+  if(jp.carregando || jp.fim) return;
+  if(jp.tipo==="todos" && jp.modo!=="busca"){ atualizarResultadosJP(); return; }
+  jp.carregando = true; jp.erro = null; atualizarResultadosJP();
+  const chave = jp.tipo+"|"+jp.modo+"|"+jp.busca;
+  try{
+    let novos;
+    if(jp.modo==="busca"){
+      novos = await acervoRpc("buscar_precedentes", {q: jp.busca, tipos: jp.tipo==="todos" ? null : [jp.tipo], limite:30, deslocamento: jp.itens.length});
+    }else{
+      const d = TIPO_POR_ID[jp.tipo].dir;
+      novos = await acervo(`/precedentes?select=id,tipo,tribunal,numero,titulo,texto,area,situacao,data_ref,url&tipo=eq.${jp.tipo}&order=ordem_num.${d}.nullslast,id.${d}&limit=30&offset=${jp.itens.length}`);
+    }
+    if(chave !== jp.tipo+"|"+jp.modo+"|"+jp.busca) return;
+    jp.itens = jp.itens.concat(novos); jp.fim = novos.length < 30;
+  }catch(err){ jp.erro = err.message; }
+  finally{ jp.carregando = false; }
+  atualizarResultadosJP();
+}
+function attachJurisprudenciaEvents(){
+  if(jp.offline){
+    const b = document.getElementById("jpReconectar");
+    if(b) b.addEventListener("click", ()=>{ jp.offline=false; jp.contagem=null; render(); });
+    return;
+  }
+  carregarContagemJP();
+  if(!jp.itens.length && !jp.carregando && !jp.erro) carregarJP(true);
+  document.querySelectorAll(".code-tab[data-tipo]").forEach(b=> b.addEventListener("click", ()=>{
+    jp.tipo = b.dataset.tipo; jp.itens=[]; jp.fim=false; jp.erro=null; render();
+  }));
+  const input = document.getElementById("jpSearch");
+  const executar = ()=>{ jp.busca = input.value.trim(); jp.modo = jp.busca ? "busca" : "lista"; if(!jp.busca && jp.tipo==="todos") jp.tipo="sumula_vinculante"; jp.itens=[]; jp.fim=false; jp.erro=null; render(); };
+  document.getElementById("jpBuscar").addEventListener("click", executar);
+  input.addEventListener("keydown", e=>{ if(e.key==="Enter") executar(); });
+  const limpar = document.getElementById("jpLimpar");
+  if(limpar) limpar.addEventListener("click", ()=>{ input.value=""; executar(); });
+  ligarResultadosJP();
+}
+function renderJurisprudenciaCurada(){
+  return `
+    <h1>Jurisprudência</h1>
+    <div class="notice">O acervo completo está indisponível no momento${jp.erroOffline ? " ("+esc(jp.erroOffline)+")" : ""}. Exibindo a seleção curada. <button class="btn ghost" id="jpReconectar">Tentar novamente</button></div>
+    ${SUMULAS.map(s=>`
+      <div class="sumula-card">
+        <span class="sumula-tribunal">${s.tribunal} · ${s.numero}</span>
+        <div class="sumula-text">"${s.texto}"</div>
+        <div class="sumula-comment">${s.comentario}</div>
+      </div>
+    `).join("")}
+  `;
 }
 
 /* ============================= DOUTRINAS ============================= */
@@ -1445,21 +1831,6 @@ function attachDoutrinasEvents(){
   });
   const back = document.getElementById("voltarMaterias");
   if(back) back.addEventListener("click", ()=>{ state.materiaSelecionada=null; render(); });
-}
-
-/* ============================= JURISPRUDÊNCIA ============================= */
-function renderJurisprudencia(){
-  return `
-    <h1>Jurisprudência</h1>
-    <p class="lede">Súmulas e entendimentos consolidados dos tribunais superiores, comentados para facilitar a memorização.</p>
-    ${SUMULAS.map(s=>`
-      <div class="sumula-card">
-        <span class="sumula-tribunal">${s.tribunal} · ${s.numero}</span>
-        <div class="sumula-text">"${s.texto}"</div>
-        <div class="sumula-comment">${s.comentario}</div>
-      </div>
-    `).join("")}
-  `;
 }
 
 /* ============================= PEÇAS ============================= */
@@ -2089,7 +2460,8 @@ function attachNoticiasEvents(){
     const nq = QUESTOES.length + (typeof QUESTOES_GERAL!=="undefined" ? QUESTOES_GERAL.length : 0);
     stats.innerHTML =
       `<span><strong>${nq}</strong>questões comentadas</span>`+
-      `<span><strong>${Object.keys(CODIGOS).length}</strong>códigos e leis</span>`+
+      `<span><strong id="statLeis">277</strong>leis e códigos na íntegra</span>`+
+      `<span><strong id="statPrec">33 mil+</strong>precedentes</span>`+
       `<span><strong>${MATERIAS.length}</strong>matérias</span>`+
       `<span><strong>${PECAS.length}</strong>modelos de peças</span>`;
   }
